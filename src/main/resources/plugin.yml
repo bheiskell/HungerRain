@@ -1,0 +1,7 @@
+name: HungerRain
+main: org.xdxa.hungerrain.HungerRain
+version: ${version}
+commands:
+  debug:
+    description: Toggles your debugging status for this plugin.
+    usage: /debug

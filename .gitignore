@@ -1,0 +1,10 @@
+# Eclipse stuff
+/.classpath
+/.project
+/.settings
+
+# maven
+/target
+
+# vim
+.*.sw[a-p]
