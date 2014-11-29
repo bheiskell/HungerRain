@@ -1,59 +1,76 @@
 
 package org.xdxa.hungerrain;
 
-import java.util.HashMap;
-import org.bukkit.entity.Player;
+import java.util.List;
+
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.xdxa.hungerrain.environment.EnvironmentContextFactory;
+import org.xdxa.hungerrain.strategies.IEnvironmentHungerStrategy;
+import org.xdxa.hungerrain.strategies.RainEnvironmentHungerStrategy;
+import org.xdxa.hungerrain.strategies.SnowEnvironmentHungerStrategy;
+import org.xdxa.hungerrain.strategies.WaterEnvironmentHungerStrategy;
+
+import com.google.common.collect.Lists;
 
 /**
- * Sample plugin for Bukkit
- *
- * @author Dinnerbone
+ * Hunger Rain Bukkit plugin.
  */
 public class HungerRain extends JavaPlugin {
-    private final SamplePlayerListener playerListener = new SamplePlayerListener(this);
-    private final SampleBlockListener blockListener = new SampleBlockListener();
-    private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
+    private static final String COMMENT =
+"HungerRain has two primary settings:\n" +
+"  frequency: the number of server ticks per-execution of each of the hunger rules\n" +
+"  depletion-rate: rate at which hunger will deplete per execution of the rules\n\n" +
+"Additionally, the snow rule allows the player to travel within a certain light threshold to stay warm.";
+
+    private static final String KEY_FREQUENCY = "frequency";
+    private static final String KEY_RAIN_DEPLETION_RATE = "rain-depletion-rate";
+    private static final String KEY_WATER_DEPLETION_RATE = "water-depletion-rate";
+    private static final String KEY_SNOW_DEPLETION_RATE = "snow-depletion-rate";
+    private static final String KEY_SNOW_REQUIRED_LIGHT_LEVEL = "snow-required-light-level";
+
+    private static final long DEFAULT_FREQUENCY = 20;
 
     @Override
     public void onDisable() {
-        // TODO: Place any custom disable code here
-
-        // NOTE: All registered events are automatically unregistered when a plugin is disabled
-
-        // EXAMPLE: Custom code, here we just output some info so we can check all is well
-        getLogger().info("Goodbye world!");
+        getLogger().info("Disabling HungerRain");
     }
 
     @Override
     public void onEnable() {
-        // TODO: Place any custom enable code here including the registration of any events
+        getLogger().info("Enabling HungerRain");
 
-        // Register our events
-        PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(playerListener, this);
-        pm.registerEvents(blockListener, this);
+        final PluginDescriptionFile pdfFile = this.getDescription();
+        getLogger().info(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
 
-        // Register our commands
-        getCommand("pos").setExecutor(new SamplePosCommand());
-        getCommand("debug").setExecutor(new SampleDebugCommand(this));
+        final FileConfiguration config = getConfig();
+        config.options().header(COMMENT);
+        config.options().copyHeader(true);
+        config.options().copyDefaults(true);
 
-        // EXAMPLE: Custom code, here we just output some info so we can check all is well
-        PluginDescriptionFile pdfFile = this.getDescription();
-        getLogger().info( pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!" );
-    }
+        config.addDefault(KEY_FREQUENCY,                 DEFAULT_FREQUENCY);
+        config.addDefault(KEY_RAIN_DEPLETION_RATE,       RainEnvironmentHungerStrategy.DEFAULT_DEPLETION_RATE);
+        config.addDefault(KEY_WATER_DEPLETION_RATE,      WaterEnvironmentHungerStrategy.DEFAULT_DEPLETION_RATE);
+        config.addDefault(KEY_SNOW_DEPLETION_RATE,       SnowEnvironmentHungerStrategy.DEFAULT_DEPLETION_RATE);
+        config.addDefault(KEY_SNOW_REQUIRED_LIGHT_LEVEL, SnowEnvironmentHungerStrategy.DEFAULT_REQUIRED_LIGHT_LEVEL);
 
-    public boolean isDebugging(final Player player) {
-        if (debugees.containsKey(player)) {
-            return debugees.get(player);
-        } else {
-            return false;
-        }
-    }
+        final long delay             = config.getInt(KEY_FREQUENCY);
+        final int rainDepletionRate  = config.getInt(KEY_RAIN_DEPLETION_RATE);
+        final int waterDepletionRate = config.getInt(KEY_WATER_DEPLETION_RATE);
+        final int snowDepletionRate  = config.getInt(KEY_SNOW_DEPLETION_RATE);
+        final int snowRequiredLight  = config.getInt(KEY_SNOW_REQUIRED_LIGHT_LEVEL);
 
-    public void setDebugging(final Player player, final boolean value) {
-        debugees.put(player, value);
+        saveConfig();
+
+        final List<IEnvironmentHungerStrategy> strategies = Lists.newArrayList(
+            new RainEnvironmentHungerStrategy(rainDepletionRate),
+            new SnowEnvironmentHungerStrategy(snowDepletionRate, snowRequiredLight),
+            new WaterEnvironmentHungerStrategy(waterDepletionRate)
+        );
+
+        final EnvironmentContextFactory environmentContextFactory = new EnvironmentContextFactory();
+
+        new HungerRainTask(this.getServer(), strategies, environmentContextFactory).runTaskTimer(this, delay, delay);
     }
 }
