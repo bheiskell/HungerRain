@@ -1,3 +1,9 @@
 name: HungerRain
 main: org.xdxa.hungerrain.HungerRain
 version: ${version}
+commands:
+    "hr":
+        usage: /<command>
+    "hr debug":
+        description: Receive debug output when HungerRain evaluates them
+        usage: /<command>

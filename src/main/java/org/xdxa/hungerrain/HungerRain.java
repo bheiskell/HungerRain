@@ -2,10 +2,12 @@
 package org.xdxa.hungerrain;
 
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.xdxa.hungerrain.command.HungerRainCommandExectutor;
 import org.xdxa.hungerrain.environment.EnvironmentContextFactory;
 import org.xdxa.hungerrain.strategies.IEnvironmentHungerStrategy;
 import org.xdxa.hungerrain.strategies.RainEnvironmentHungerStrategy;
@@ -13,6 +15,7 @@ import org.xdxa.hungerrain.strategies.SnowEnvironmentHungerStrategy;
 import org.xdxa.hungerrain.strategies.WaterEnvironmentHungerStrategy;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Hunger Rain Bukkit plugin.
@@ -31,6 +34,8 @@ public class HungerRain extends JavaPlugin {
     private static final String KEY_SNOW_REQUIRED_LIGHT_LEVEL = "snow-required-light-level";
 
     private static final long DEFAULT_FREQUENCY = 20;
+
+    private static final Set<String> debuggers = Sets.newHashSet();
 
     @Override
     public void onDisable() {
@@ -71,6 +76,13 @@ public class HungerRain extends JavaPlugin {
 
         final EnvironmentContextFactory environmentContextFactory = new EnvironmentContextFactory();
 
-        new HungerRainTask(this.getServer(), strategies, environmentContextFactory).runTaskTimer(this, delay, delay);
+        final HungerRainTask hungerRainTask = new HungerRainTask(
+                this.getServer(),
+                strategies,
+                debuggers,
+                environmentContextFactory);
+        hungerRainTask.runTaskTimer(this, delay, delay);
+
+        this.getCommand("hr").setExecutor(new HungerRainCommandExectutor(debuggers));
     }
 }

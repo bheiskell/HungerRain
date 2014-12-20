@@ -1,8 +1,10 @@
 package org.xdxa.hungerrain;
 
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
+import org.bukkit.GameMode;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -16,23 +18,27 @@ import org.xdxa.hungerrain.strategies.IEnvironmentHungerStrategy;
 public class HungerRainTask extends BukkitRunnable {
 
     @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger("Minecraft");
+    private static final Logger LOG = Logger.getLogger("Minecraft.HungerRain");
 
     private final Server server;
     private final List<IEnvironmentHungerStrategy> strategies;
+    private final Set<String> debuggers;
     private final EnvironmentContextFactory environmentContextFactory;
 
     /**
      * Initialize the instance.
      * @param server the Bukkit server
      * @param strategies the strategies to execute
+     * @param debuggers players which receieve debug output
      * @param environmentContextFactory the environment context factory
      */
     public HungerRainTask(final Server server,
                           final List<IEnvironmentHungerStrategy> strategies,
+                          final Set<String> debuggers,
                           final EnvironmentContextFactory environmentContextFactory) {
         this.server = server;
         this.strategies = strategies;
+        this.debuggers = debuggers;
         this.environmentContextFactory = environmentContextFactory;
     }
 
@@ -44,10 +50,16 @@ public class HungerRainTask extends BukkitRunnable {
     private void executeStrategies(final Player[] players) {
 
         for (final Player player : players) {
-            int foodLevel = player.getFoodLevel();
+            final int initialFoodLevel = player.getFoodLevel();
+            int foodLevel = initialFoodLevel;
 
-            // no point in wasting cycles on empty stomaches
+            if (GameMode.CREATIVE.equals(player.getGameMode())) {
+                sendMessage(player, "Skipping creative player");
+                continue;
+            }
+
             if (foodLevel == 0) {
+                sendMessage(player, "Skipping empty stomache");
                 continue;
             }
 
@@ -56,7 +68,11 @@ public class HungerRainTask extends BukkitRunnable {
                 foodLevel -= strategy.evaluate(environmentContext);
             }
 
-            //player.sendMessage(environmentContext.toString());
+            sendMessage(player, environmentContext);
+
+            if (initialFoodLevel != foodLevel) {
+                sendMessage(player, "Food decreased: ", initialFoodLevel, " -> ", foodLevel);
+            }
 
             if (foodLevel < 0) {
                 foodLevel = 0;
@@ -66,4 +82,14 @@ public class HungerRainTask extends BukkitRunnable {
         }
     }
 
+    private void sendMessage(final Player player, final Object ... messages) {
+        if (debuggers.contains(player.getName())) {
+            final StringBuffer sb = new StringBuffer();
+            for (final Object message : messages) {
+                sb.append(message);
+            }
+
+            player.sendMessage(sb.toString());
+        }
+    }
 }
