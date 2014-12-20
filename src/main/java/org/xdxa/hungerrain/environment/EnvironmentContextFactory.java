@@ -1,6 +1,7 @@
 package org.xdxa.hungerrain.environment;
 
 import java.util.Random;
+import java.util.logging.Logger;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -11,6 +12,9 @@ import org.xdxa.hungerrain.minecraft.MinecraftSimplexNoiseGenerator;
  * Factory for the {@link EnvironmentContext} which abstracts much of Bukkit and a few hackish behaviors of Minecraft.
  */
 public class EnvironmentContextFactory {
+
+    @SuppressWarnings("unused")
+    private static final Logger LOG = Logger.getLogger("Minecraft.HungerRain");
 
     /**
      * When Fancy Graphics is enabled, the block selected for temperature evaluation is 10 blocks beneath the player.
@@ -42,7 +46,7 @@ public class EnvironmentContextFactory {
      */
     public EnvironmentContext create(final Location location) {
         final World world = location.getWorld();
-        final Block block = world.getBlockAt(location);
+        final Block block = location.getBlock();
 
         final int x = block.getX();
         final int y = block.getY();
@@ -52,7 +56,7 @@ public class EnvironmentContextFactory {
         final float clientTemperature = getTemperatureNoise(biomeTemperature, x, y + FANCY_GRAPHICS_OFFSET, z);
 
         final byte lightLevel = block.getLightLevel(); // 0-15
-        final boolean isExposed = world.getHighestBlockAt(location).getY() == y;
+        final boolean isExposed = isExposed(location);
         final boolean inWater = location.getBlock().isLiquid();
 
         return new EnvironmentContext(
@@ -62,6 +66,29 @@ public class EnvironmentContextFactory {
                 lightLevel,
                 isExposed,
                 inWater);
+    }
+
+    /**
+     * Is the player exposed to the elements?
+     *
+     * This method doesn't use {@link World#getHighestBlockAt(Location)}, because it returns the highest light
+     * restricting block, which means it skips glass.
+     *
+     * @param location the player location
+     * @return true if the player is exposed
+     */
+    private boolean isExposed(final Location location) {
+        final Location current = location.clone();
+
+        // Skip the player's lower body, because snow and other non-blocking objects will register as not empty. In this
+        // case we're not concerned about non-blocking objects at the torso level, e.g., tall grass.
+        current.add(0, 1, 0);
+
+        while (current.getBlock().isEmpty()) {
+            current.add(0, 1, 0);
+        }
+
+        return current.getBlockY() == location.getWorld().getMaxHeight();
     }
 
     /**
