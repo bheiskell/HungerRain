@@ -11,6 +11,8 @@ A player's food level will be depleted at a configured rate in the following cir
 - When the player stands in the rain
 - When the player stands in the snow and they're under a specific light level (lights keep the player warm)
 
+Wearing a full leather armor set prevents the hunger damage. Instead, the armor is damaged at a slower, configurable rate.
+
 ## Configuration
 
 Configuration of the plugin can be found in the configuration file created upon loading of the plugin.

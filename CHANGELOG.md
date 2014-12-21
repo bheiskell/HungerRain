@@ -4,11 +4,12 @@
 
 #### Bug Fixes
 
-* **glass:** respect transparent blocks that prevent movement ([16db8c3a](https://www.github.com/bheiskell/HungerRain/commit/16db8c3afaed6f34faf7cebc73e78df872e8a5e7))
+* **glass:** respect transparent blocks that prevent movement ([031102a9](https://www.github.com/bheiskell/HungerRain/commit/031102a9c0a79c0cc5ba8ffe8c92fc0139e8ebb2))
 
 
 #### Features
 
+* **armor:** add damage prevention by using full leather armor set ([77cb213d](https://www.github.com/bheiskell/HungerRain/commit/77cb213dee4f07c791fc0428c8fd2000f4edfd69))
 * **debug:** add  command for in game debug info ([a8e9cd95](https://www.github.com/bheiskell/HungerRain/commit/a8e9cd95dd0cda09729a3a7ae7d5e529f1efcba7))
 
 
