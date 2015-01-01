@@ -43,6 +43,8 @@ public class EnvironmentContextFactoryTest {
         when(playerLocation.getWorld()).thenReturn(world);
         when(playerLocation.clone()).thenReturn(playerLocation);
 
+        when(world.getMaxHeight()).thenReturn(255);
+
         // Add stubbing to track expected changes to the y values
         when(playerLocation.add(0, 1, 0)).thenAnswer(new Answer<Location>() {
             @Override
@@ -57,6 +59,8 @@ public class EnvironmentContextFactoryTest {
                 return playerLocationY;
             }
         });
+
+        playerLocationY = 0;
     }
 
     /**
@@ -68,26 +72,40 @@ public class EnvironmentContextFactoryTest {
 
         final EnvironmentContext ec = ecf.create(playerLocation);
 
-        // called twice for the isEmpty == true and once to skip lower body
+        // player's lower body is skipped causing this number to be one greater than the true's returned by isEmpty
         verify(playerLocation, times(3)).add(0, 1, 0);
 
         assertFalse("Player shouldn't be unexposed", ec.isExposed());
     }
 
     /**
-     * Test exposure.
+     * Test exposure behavior defined for 1.7, where the max height is actually bedrock.
      */
     @Test
-    public void testIsExposed() {
-        // we're going to set the player's torso to max height, which will skip the isEmpty() loop
-        when(playerBlock.isEmpty()).thenReturn(false); // at max height, isEmpty returns false
-        when(world.getMaxHeight()).thenReturn(256);
-        playerLocationY = 255; // setting to one block below max height, to check the torso
+    public void testIsExposed17() {
+        when(playerBlock.isEmpty()).thenReturn(true, true, true, true, false);
+        playerLocationY = 250;
 
         final EnvironmentContext ec = ecf.create(playerLocation);
 
-        // should only get called to skip the player's lower body
-        verify(playerLocation, times(1)).add(0, 1, 0);
+        // player's lower body is skipped causing this number to be one greater than the true's returned by isEmpty
+        verify(playerLocation, times(5)).add(0, 1, 0);
+
+        assertTrue("Player should be unexposed", ec.isExposed());
+    }
+
+
+    /**
+     * Test exposure behavior defined for 1.8, where up is undefined.
+     */
+    @Test
+    public void testIsExposedMaxHeight() {
+        when(playerBlock.isEmpty()).thenReturn(true);
+        when(world.getMaxHeight()).thenReturn(255);
+
+        final EnvironmentContext ec = ecf.create(playerLocation);
+
+        verify(playerLocation, times(255)).add(0, 1, 0);
 
         assertTrue("Player should be unexposed", ec.isExposed());
     }

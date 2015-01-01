@@ -84,7 +84,7 @@ public class EnvironmentContextFactory {
         // case we're not concerned about non-blocking objects at the torso level, e.g., tall grass.
         current.add(0, 1, 0);
 
-        while (current.getBlock().isEmpty()) {
+        while (current.getBlock().isEmpty() && current.getBlockY() < location.getWorld().getMaxHeight()) {
             current.add(0, 1, 0);
         }
 
