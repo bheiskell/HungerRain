@@ -1,5 +1,6 @@
 package org.xdxa.hungerrain;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -65,7 +66,7 @@ public class HungerRainTask extends BukkitRunnable {
         executeStrategies(server.getOnlinePlayers());
     }
 
-    private void executeStrategies(final Player[] players) {
+    private void executeStrategies(final Collection<? extends Player> players) {
 
         for (final Player player : players) {
             final int initialFoodLevel = player.getFoodLevel();
