@@ -1,3 +1,12 @@
+<a name="0.1.1"></a>
+### 0.1.1 (2015-01-01)
+
+
+#### Bug Fixes
+
+* **1.8:** utilize max height to terminate is exposed loop ([11856217](https://www.github.com/bheiskell/HungerRain/commit/118562172fd2c0a25bd8f5abdd85bca585d0c6d3))
+
+
 <a name="0.1.0"></a>
 ## 0.1.0 (2014-12-20)
 
