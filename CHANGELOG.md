@@ -1,3 +1,12 @@
+<a name="0.1.2"></a>
+### 0.1.2 (2015-01-10)
+
+
+#### Features
+
+* **permissions:** add `hungerrain.disable` permission ([f57b1fc2](https://www.github.com/bheiskell/HungerRain/commit/f57b1fc273bee491cb43cdd9d410f74f6d2cca40))
+
+
 <a name="0.1.1"></a>
 ### 0.1.1 (2015-01-01)
 
