@@ -7,3 +7,7 @@ commands:
     "hr debug":
         description: Receive debug output when HungerRain evaluates them
         usage: /<command>
+permissions:
+    hungerrain.disable:
+        description: Deactivates the plugin
+        default: false

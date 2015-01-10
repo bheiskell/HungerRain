@@ -76,6 +76,11 @@ public class HungerRainTask extends BukkitRunnable {
                 continue;
             }
 
+            if (player.hasPermission("hungerrain.disable")) {
+                sendMessage(player, "Disabled for player");
+                continue;
+            }
+
             if (initialFoodLevel == 0) {
                 sendMessage(player, "Skipping empty stomache");
                 continue;

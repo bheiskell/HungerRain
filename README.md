@@ -17,6 +17,8 @@ Wearing a full leather armor set prevents the hunger damage. Instead, the armor 
 
 Configuration of the plugin can be found in the configuration file created upon loading of the plugin.
 
+Additionally, the plugin can be disabled using permissions by assigning the `hungerrain.disable` permission.
+
 ## Permissions
 
 There are currently no permissions for the plugin.
