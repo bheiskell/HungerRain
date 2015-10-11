@@ -38,13 +38,15 @@ public class EnvironmentContext {
     private final byte lightLevel;
     private final boolean isExposed;
     private final boolean inWater;
+    private final boolean inDeepWater;
 
     /**
      * Initialize the instance.
      * @param biome the biome type
      * @param isStorming is the world currently storming?
      * @param temperature the temperature to evaluate
-     * @param inWater is the player in water?
+     * @param inWater is the player in shallow water?
+     * @param inDeepWater is the player in deep water?
      * @param isExposed is the player exposed to the elements?
      * @param lightLevel the player's light level
      */
@@ -53,13 +55,15 @@ public class EnvironmentContext {
                              final float temperature,
                              final byte lightLevel,
                              final boolean isExposed,
-                             final boolean inWater) {
+                             final boolean inWater,
+                             final boolean inDeepWater) {
         this.biome = biome;
         this.isStorming = isStorming;
         this.temperature = temperature;
         this.lightLevel = lightLevel;
         this.isExposed = isExposed;
         this.inWater = inWater;
+        this.inDeepWater = inDeepWater;
     }
 
     /**
@@ -95,11 +99,19 @@ public class EnvironmentContext {
     }
 
     /**
-     * Is the player in water?
-     * @return true if in water
+     * Is the player in shallow water?
+     * @return true if in shallow water
      */
     public boolean inWater() {
         return inWater;
+    }
+
+    /**
+     * Is the player in deep water?
+     * @return true if in deep water
+     */
+    public boolean inDeepWater() {
+        return inDeepWater;
     }
 
     /**

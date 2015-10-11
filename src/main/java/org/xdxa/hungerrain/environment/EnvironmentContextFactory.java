@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.xdxa.hungerrain.minecraft.MinecraftSimplexNoiseGenerator;
 
 /**
@@ -46,26 +47,30 @@ public class EnvironmentContextFactory {
      */
     public EnvironmentContext create(final Location location) {
         final World world = location.getWorld();
-        final Block block = location.getBlock();
+        final Block lowerBodyBlock = location.getBlock();
+        final Block upperBodyBlock = lowerBodyBlock.getRelative(BlockFace.UP);
+        final Block beneathBlock = location.getBlock().getRelative(BlockFace.DOWN);
 
-        final int x = block.getX();
-        final int y = block.getY();
-        final int z = block.getZ();
+        final int x = lowerBodyBlock.getX();
+        final int y = lowerBodyBlock.getY();
+        final int z = lowerBodyBlock.getZ();
 
         final float biomeTemperature = (float)world.getTemperature(x, z);
         final float clientTemperature = getTemperatureNoise(biomeTemperature, x, y + FANCY_GRAPHICS_OFFSET, z);
 
-        final byte lightLevel = block.getLightLevel(); // 0-15
+        final byte lightLevel = lowerBodyBlock.getLightLevel(); // 0-15
         final boolean isExposed = isExposed(location);
-        final boolean inWater = location.getBlock().isLiquid();
+        final boolean inWater = lowerBodyBlock.isLiquid() && upperBodyBlock.isEmpty() && !beneathBlock.isLiquid();
+        final boolean inDeepWater = !inWater && lowerBodyBlock.isLiquid();
 
         return new EnvironmentContext(
-                block.getBiome(),
+                lowerBodyBlock.getBiome(),
                 world.hasStorm(),
                 clientTemperature,
                 lightLevel,
                 isExposed,
-                inWater);
+                inWater,
+                inDeepWater);
     }
 
     /**

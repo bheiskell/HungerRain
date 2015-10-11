@@ -12,18 +12,26 @@ public class WaterEnvironmentHungerStrategy implements IEnvironmentHungerStrateg
     private static final Logger LOG = Logger.getLogger("Minecraft");
 
     /**
-     * Default depletion rate.
+     * Default shallow depletion rate.
      */
     public static final int DEFAULT_DEPLETION_RATE = 1;
 
+    /**
+     * Default deep depletion rate.
+     */
+    public static final int DEFAULT_DEEP_DEPLETION_RATE = 1;
+
     private final int depletionRate;
+    private final int deepDepletionRate;
 
     /**
      * Initialize the instance.
-     * @param depletionRate the depletion rate
+     * @param depletionRate the shallow depletion rate
+     * @param deepDepletionRate  the deep water deletion rate
      */
-    public WaterEnvironmentHungerStrategy(final int depletionRate) {
+    public WaterEnvironmentHungerStrategy(final int depletionRate, final int deepDepletionRate) {
         this.depletionRate = depletionRate;
+        this.deepDepletionRate = deepDepletionRate;
     }
 
     @Override
@@ -31,8 +39,12 @@ public class WaterEnvironmentHungerStrategy implements IEnvironmentHungerStrateg
 
         if (environmentContext.inWater()) {
             return depletionRate;
-        } else {
-            return 0;
         }
+
+        if (environmentContext.inDeepWater()) {
+            return deepDepletionRate;
+        }
+
+        return 0;
     }
 }

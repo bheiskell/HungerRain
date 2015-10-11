@@ -32,6 +32,7 @@ public class HungerRain extends JavaPlugin {
     private static final String KEY_ARMOR_DAMAGE_FREQUENCY    = "armor-damage-frequency";
     private static final String KEY_RAIN_DEPLETION_RATE       = "rain-depletion-rate";
     private static final String KEY_WATER_DEPLETION_RATE      = "water-depletion-rate";
+    private static final String KEY_DEEP_WATER_DEPLETION_RATE = "deep-water-depletion-rate";
     private static final String KEY_SNOW_DEPLETION_RATE       = "snow-depletion-rate";
     private static final String KEY_SNOW_REQUIRED_LIGHT_LEVEL = "snow-required-light-level";
     private static final String KEY_ADMIN_PROTECTION          = "admin-protection";
@@ -65,6 +66,7 @@ public class HungerRain extends JavaPlugin {
         config.addDefault(KEY_ARMOR_DAMAGE_FREQUENCY,    DEFAULT_ARMOR_DAMAGE_FREQUENCY);
         config.addDefault(KEY_RAIN_DEPLETION_RATE,       RainEnvironmentHungerStrategy.DEFAULT_DEPLETION_RATE);
         config.addDefault(KEY_WATER_DEPLETION_RATE,      WaterEnvironmentHungerStrategy.DEFAULT_DEPLETION_RATE);
+        config.addDefault(KEY_DEEP_WATER_DEPLETION_RATE, WaterEnvironmentHungerStrategy.DEFAULT_DEEP_DEPLETION_RATE);
         config.addDefault(KEY_SNOW_DEPLETION_RATE,       SnowEnvironmentHungerStrategy.DEFAULT_DEPLETION_RATE);
         config.addDefault(KEY_SNOW_REQUIRED_LIGHT_LEVEL, SnowEnvironmentHungerStrategy.DEFAULT_REQUIRED_LIGHT_LEVEL);
         config.addDefault(KEY_ADMIN_PROTECTION,          DEFAULT_ADMIN_PROCTECTION);
@@ -74,6 +76,7 @@ public class HungerRain extends JavaPlugin {
         final long armorDamageFrequency  = config.getInt(KEY_ARMOR_DAMAGE_FREQUENCY);
         final int rainDepletionRate      = config.getInt(KEY_RAIN_DEPLETION_RATE);
         final int waterDepletionRate     = config.getInt(KEY_WATER_DEPLETION_RATE);
+        final int deepWaterDepletionRate = config.getInt(KEY_DEEP_WATER_DEPLETION_RATE);
         final int snowDepletionRate      = config.getInt(KEY_SNOW_DEPLETION_RATE);
         final int snowRequiredLight      = config.getInt(KEY_SNOW_REQUIRED_LIGHT_LEVEL);
         final boolean adminProtection    = config.getBoolean(KEY_ADMIN_PROTECTION);
@@ -84,7 +87,7 @@ public class HungerRain extends JavaPlugin {
         final List<IEnvironmentHungerStrategy> strategies = Lists.newArrayList(
             new RainEnvironmentHungerStrategy(rainDepletionRate),
             new SnowEnvironmentHungerStrategy(snowDepletionRate, snowRequiredLight),
-            new WaterEnvironmentHungerStrategy(waterDepletionRate)
+            new WaterEnvironmentHungerStrategy(waterDepletionRate, deepWaterDepletionRate)
         );
 
         final EnvironmentContextFactory environmentContextFactory = new EnvironmentContextFactory();
