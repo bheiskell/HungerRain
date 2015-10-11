@@ -36,6 +36,8 @@ public class HungerRainTask extends BukkitRunnable {
     private final Server server;
     private final List<IEnvironmentHungerStrategy> strategies;
     private final long armorDamageFrequency;
+    private final boolean adminProtection;
+    private final boolean creativeProtection;
     private final Set<String> debuggers;
     private final EnvironmentContextFactory environmentContextFactory;
 
@@ -46,17 +48,23 @@ public class HungerRainTask extends BukkitRunnable {
      * @param server the Bukkit server
      * @param strategies the strategies to execute
      * @param armorDamageFrequency the number of times {@link #run()} is executed before an armor set takes damage
+     * @param adminProtection exempt admins
+     * @param creativeProtection exempt players in creative mode
      * @param debuggers players which receieve debug output
      * @param environmentContextFactory the environment context factory
      */
     public HungerRainTask(final Server server,
                           final List<IEnvironmentHungerStrategy> strategies,
                           final long armorDamageFrequency,
+                          final boolean adminProtection,
+                          final boolean creativeProtection,
                           final Set<String> debuggers,
                           final EnvironmentContextFactory environmentContextFactory) {
         this.server = server;
         this.strategies = strategies;
         this.armorDamageFrequency = armorDamageFrequency;
+        this.adminProtection = adminProtection;
+        this.creativeProtection = creativeProtection;
         this.debuggers = debuggers;
         this.environmentContextFactory = environmentContextFactory;
     }
@@ -71,7 +79,12 @@ public class HungerRainTask extends BukkitRunnable {
         for (final Player player : players) {
             final int initialFoodLevel = player.getFoodLevel();
 
-            if (GameMode.CREATIVE.equals(player.getGameMode())) {
+            if (adminProtection && player.isOp()) {
+                sendMessage(player, "Skipping admin player");
+                continue;
+            }
+
+            if (creativeProtection && GameMode.CREATIVE.equals(player.getGameMode())) {
                 sendMessage(player, "Skipping creative player");
                 continue;
             }

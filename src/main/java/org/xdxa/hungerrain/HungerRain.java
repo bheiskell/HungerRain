@@ -34,9 +34,13 @@ public class HungerRain extends JavaPlugin {
     private static final String KEY_WATER_DEPLETION_RATE      = "water-depletion-rate";
     private static final String KEY_SNOW_DEPLETION_RATE       = "snow-depletion-rate";
     private static final String KEY_SNOW_REQUIRED_LIGHT_LEVEL = "snow-required-light-level";
+    private static final String KEY_ADMIN_PROTECTION          = "admin-protection";
+    private static final String KEY_CREATIVE_PROTECTION       = "creative-protection";
 
     private static final long DEFAULT_FREQUENCY              = 100; // 5 seconds
     private static final long DEFAULT_ARMOR_DAMAGE_FREQUENCY = 5;   // 100 * 5 = 25 seconds
+    private static final boolean DEFAULT_ADMIN_PROCTECTION   = false; // not as easily toggleable, so false by default
+    private static final boolean DEFAULT_CREATIVE_PROTECTION = true;
 
     private static final Set<String> debuggers = Sets.newHashSet();
 
@@ -63,13 +67,17 @@ public class HungerRain extends JavaPlugin {
         config.addDefault(KEY_WATER_DEPLETION_RATE,      WaterEnvironmentHungerStrategy.DEFAULT_DEPLETION_RATE);
         config.addDefault(KEY_SNOW_DEPLETION_RATE,       SnowEnvironmentHungerStrategy.DEFAULT_DEPLETION_RATE);
         config.addDefault(KEY_SNOW_REQUIRED_LIGHT_LEVEL, SnowEnvironmentHungerStrategy.DEFAULT_REQUIRED_LIGHT_LEVEL);
+        config.addDefault(KEY_ADMIN_PROTECTION,          DEFAULT_ADMIN_PROCTECTION);
+        config.addDefault(KEY_CREATIVE_PROTECTION,       DEFAULT_CREATIVE_PROTECTION);
 
-        final long delay                = config.getInt(KEY_FREQUENCY);
-        final long armorDamageFrequency = config.getInt(KEY_ARMOR_DAMAGE_FREQUENCY);
-        final int rainDepletionRate     = config.getInt(KEY_RAIN_DEPLETION_RATE);
-        final int waterDepletionRate    = config.getInt(KEY_WATER_DEPLETION_RATE);
-        final int snowDepletionRate     = config.getInt(KEY_SNOW_DEPLETION_RATE);
-        final int snowRequiredLight     = config.getInt(KEY_SNOW_REQUIRED_LIGHT_LEVEL);
+        final long delay                 = config.getInt(KEY_FREQUENCY);
+        final long armorDamageFrequency  = config.getInt(KEY_ARMOR_DAMAGE_FREQUENCY);
+        final int rainDepletionRate      = config.getInt(KEY_RAIN_DEPLETION_RATE);
+        final int waterDepletionRate     = config.getInt(KEY_WATER_DEPLETION_RATE);
+        final int snowDepletionRate      = config.getInt(KEY_SNOW_DEPLETION_RATE);
+        final int snowRequiredLight      = config.getInt(KEY_SNOW_REQUIRED_LIGHT_LEVEL);
+        final boolean adminProtection    = config.getBoolean(KEY_ADMIN_PROTECTION);
+        final boolean creativeProtection = config.getBoolean(KEY_CREATIVE_PROTECTION);
 
         saveConfig();
 
@@ -85,6 +93,8 @@ public class HungerRain extends JavaPlugin {
                 this.getServer(),
                 strategies,
                 armorDamageFrequency,
+                adminProtection,
+                creativeProtection,
                 debuggers,
                 environmentContextFactory);
         hungerRainTask.runTaskTimer(this, delay, delay);

@@ -46,6 +46,8 @@ public class HungerRainTaskTest {
                 server,
                 Lists.newArrayList(strategy),
                 1,
+                true,
+                true,
                 debuggers,
                 contextFactory);
 
