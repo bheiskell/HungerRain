@@ -1,3 +1,13 @@
+<a name="0.2.0"></a>
+## 0.2.0 (2015-10-10)
+
+
+#### Features
+
+* **admin:** add configuration to control admin and creative exemptions ([620e5451](https://www.github.com/bheiskell/HungerRain/commit/620e5451a7d28849001cbb3a3fa97fc8e5422324))
+* **water:** separate shallow and deep water damage ([a7dc3749](https://www.github.com/bheiskell/HungerRain/commit/a7dc3749cd47d9a66a9a2375836d40896b5e9e19))
+
+
 <a name="0.1.2"></a>
 ### 0.1.2 (2015-01-10)
 

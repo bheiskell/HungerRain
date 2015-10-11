@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.xdxa</groupId>
   <artifactId>hunger-rain</artifactId>
-  <version>0.1.2-SNAPSHOT</version>
+  <version>0.2.0-SNAPSHOT</version>
   <name>HungerRain</name>
   <url>https://www.github.com/bheiskell/HungerRain</url>
   <properties>
